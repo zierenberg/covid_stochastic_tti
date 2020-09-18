@@ -7,16 +7,16 @@ using LinearAlgebra
 using DelimitedFiles
 using StaticArrays
 """
-# I just want to see if this works.
+# I just want to see if this works. OK it does :-)
 """
 # generate a stochastic trajectory
-SIR dynamics is goverened by differential equation
-``
-    \\frac{dI}{dt} = \\sum_{i=1}^{I}\\lambda_i\\frac{S}{N} - \\mu I
-``
+#SIR dynamics is goverened by differential equation
+#``
+#    \\frac{dI}{dt} = \\sum_{i=1}^{I}\\lambda_i\\frac{S}{N} - \\mu I
+#``
 
 # Arguments
-* distribution for the heterogeneous rates P(lambda)
+#* distribution for the heterogeneous rates P(lambda)
 """
 function trajectory!(rng, list_T, list_S, list_I, list_R, system)
     rates = current_rates(system)
@@ -39,19 +39,19 @@ function trajectory!(rng, list_T, list_S, list_I, list_R, system)
 end
 
 """
-Ingreedients:
-- the rate of each agent to become infected or to recover
--> the rate of infected to make a connection with any other agent (well-mixed),
-   which adds to the connection matrix, and only infects with a certain
-   probability
-   !! Connection matrix needs to be deleted after 2 weeks -> LightGraphs plus a
-   queue where we store the edges and the time when stored. (clean the graph whenever it gets updated)
-
-- the rate to be tested for those that will develop symptoms (probability)
-    -> as soon as S->I in update we draw a random number, and if the id is symptom based then add this rate to the system
-- the rate to be tested randomly
--> upon positive test: add contacts to a list of tracing
-- the rate to test people from tracing list
+#Ingreedients:
+# - the rate of each agent to become infected or to recover
+# -> the rate of infected to make a connection with any other agent (well-mixed),
+#    which adds to the connection matrix, and only infects with a certain
+#    probability
+#    !! Connection matrix needs to be deleted after 2 weeks -> LightGraphs plus a
+#    queue where we store the edges and the time when stored. (clean the graph whenever it gets updated)
+#
+# - the rate to be tested for those that will develop symptoms (probability)
+#     -> as soon as S->I in update we draw a random number, and if the id is symptom based then add this rate to the system
+# - the rate to be tested randomly
+# -> upon positive test: add contacts to a list of tracing
+# - the rate to test people from tracing list
 """
 mutable struct SIR{D}
     epsilon::Float64
@@ -77,11 +77,11 @@ mutable struct SIR{D}
 end
 
 """
-update rates and system according to the last event that happend:
-index -> event type and agent id
-e.g.: index = 1-10000 would mean update agent i out of 10.000 = N
-      index = 10001 -> would mean to random test
-      index = 10002++ -> would mean do a test from some list that we need to define
+# update rates and system according to the last event that happend:
+# index -> event type and agent id
+# e.g.: index = 1-10000 would mean update agent i out of 10.000 = N
+#       index = 10001 -> would mean to random test
+#       index = 10002++ -> would mean do a test from some list that we need to define
 """
 function update!(rates::AbstractVector, index::Int, system::SIR, rng::AbstractRNG)
     system.measure_S = system.S
@@ -128,10 +128,12 @@ function update_sum!(system, change)
 end
 
 """
-evaluate current rates of SIR system
+#evaluate current rates of SIR system
 """
+
 function current_rates(system::SIR)
     rate_recovery = system.mu * system.I
     rate_infection = system.sum_current_lambda* system.S/system.N + system.epsilon
     return MVector{2,Float64}(rate_recovery, rate_infection)
 end
+"""
