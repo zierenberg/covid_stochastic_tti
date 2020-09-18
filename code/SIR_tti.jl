@@ -78,9 +78,6 @@ end
 """
 update rates and system according to the last event that happend:
 index -> event type and agent id
-e.g.: index = 1-10000 would mean update agent i out of 10.000 = N
-      index = 10001 -> would mean to random test
-      index = 10002++ -> would mean do a test from some list that we need to define
 """
 function update!(rates::AbstractVector, index::Int, system::SIR, rng::AbstractRNG)
     system.measure_S = system.S
