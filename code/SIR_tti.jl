@@ -58,14 +58,14 @@ mutable struct SIR
     omega_r::Float64 # rate of random test on any population individual
     omega_s::Float64 # rate of symptomatic-driven test on symptomatic
     # probabilities
-    p_asymptomatic::Float64  
+    p_asymptomatic::Float64
     p_infection::Float64
     p_prevalence::Float64
     # compartments
     N::Int          # population size (S+I+R)
     S::Int          # susceptible
     I::Int          # infected (=H_a+H_s+T)
-    H_a::Int        # hidden asymptomatic infected 
+    H_a::Int        # hidden asymptomatic infected
     H_s::Int        # hidden symptomatic infected
     T::Int          # traced infected
     R::Int          # recovered
@@ -95,7 +95,7 @@ mutable struct SIR
         omega_r = Float64(omega_r)
         omega_s = Float64(omega_s)
         p_infection = lambda/nu
-        
+
         new(rng, epsilon, mu, lambda, nu, omega_r, omega_s, p_asymptomatic, p_infection, p_prevalence, N, S0, I0, H_a, H_s, T, R0, S0, I0, R0)
     end
 end
@@ -103,7 +103,7 @@ end
 """
 update rates and system according to the last event that happend:
 1: recovery
-2: contact internal 
+2: contact internal
 3: infection external
 4: random test
 5: symptom-driven test
@@ -121,9 +121,7 @@ function update!(rates::AbstractVector, event::Int, system::SIR)
         else
             T -= 1
         end
-        system.I -= 1
         system.R += 1
-
     elseif index == 2 # infection
         system.S -= 1
         system.I += 1
@@ -177,4 +175,3 @@ end
 #        system.update_current_lambda = 0
 #    end
 #end
-
