@@ -112,7 +112,7 @@ function update!(rates::AbstractVector, event::Int, system::SIR)
     system.measure_S = system.S
     system.measure_I = system.I
     system.measure_R = system.R
-    if index == 1 # recovery
+    if event == 1 # recovery (from any pool of infected individuals)
         i = sample(system.rng, [1,2,3], AbstractWeights([system.H_a, system.H_s, system.T]./system.I))
         if i==1
             H_a -= 1
@@ -121,12 +121,38 @@ function update!(rates::AbstractVector, event::Int, system::SIR)
         else
             T -= 1
         end
+        system.I -= 1
         system.R += 1
-    elseif index == 2 # infection
+    elseif event == 2 # infection (internal, through contacts) these go randomly to s or a (we need ar random number)
+        i = sample(system.rng, [1,2], AbstractWeights([system.p_asymptomatic, 1-system.p_asymptomatic]))
+        if i==1
+            H_a += 1
+        else i==2
+            H_s += 1
+        end
         system.S -= 1
         system.I += 1
-        @assert length(system.current_lambda) == system.I
-    elseif index == 0 # absorbing state of zero infected
+    elseif event == 3 # infection (external)
+        i = sample(system.rng, [1,2], AbstractWeights([system.p_asymptomatic, 1-system.p_asymptomatic]))
+        if i==1
+            H_a += 1
+        else i==2
+            H_s += 1
+        end
+        system.S -= 1
+        system.I += 1
+    elseif event == 4 # random testing (from or(H_a,H_s) to T)
+        i = sample(system.rng, [1,2], AbstractWeights([system.H_a, system.H_s]./(system.I-system.T)))
+        if i==1
+            H_a -= 1
+        else i==2
+            H_s -= 1
+        end
+        system.T += 1
+    elseif event == 5 # symptom-driven testing (from H_s to T)
+        H_s      -= 1
+        system.T += 1
+    elseif event == 0 # absorbing state of zero infected
         system.measure_S = system.S
         system.measure_I = system.I
         system.measure_R = system.R
