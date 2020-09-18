@@ -6,7 +6,8 @@ using ProgressMeter
 using LinearAlgebra
 using DelimitedFiles
 using StaticArrays
-
+"""
+# I just want to see if this works.
 """
 # generate a stochastic trajectory
 SIR dynamics is goverened by differential equation
@@ -20,7 +21,7 @@ SIR dynamics is goverened by differential equation
 function trajectory!(rng, list_T, list_S, list_I, list_R, system)
     rates = current_rates(system)
     pass_update!(rates, index) = update!(rates, index, system, rng)
-    
+
     list_S[1] = system.measure_S
     list_I[1] = system.measure_I
     list_R[1] = system.measure_R
@@ -66,7 +67,7 @@ mutable struct SIR{D}
     measure_S::Int
     measure_I::Int
     measure_R::Int
-    
+
     function SIR{D}(rng::AbstractRNG, P_lambda::D, epsilon::Number, mu::Number, S0::Int, I0::Int, R0::Int) where D
         N = S0 + I0 + R0
         current_lambda = rand(rng, P_lambda, I0)
@@ -103,7 +104,7 @@ function update!(rates::AbstractVector, index::Int, system::SIR, rng::AbstractRN
     else
         throw(UndefVarError(:index))
     end
-    
+
     rates .= current_rates(system)
 end
 
@@ -117,8 +118,8 @@ function add_to_system!(system, lambda)
     update_sum!(system, lambda)
 end
 
-function update_sum!(system, change) 
-    system.sum_current_lambda += change 
+function update_sum!(system, change)
+    system.sum_current_lambda += change
     system.update_current_lambda += 1
     if system.update_current_lambda > 1e5
         system.sum_current_lambda = sum(system.current_lambda)
